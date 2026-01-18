@@ -8,17 +8,12 @@ SECRET_KEY = "sb_secret_EzUAmnOCiurK8knt3GTvbA_o884xyRF"
 
 @app.route("/")
 def index():
-    return render_template("index.html")
-
-@app.route("/viagens")
-def viagens():
-    return render_template("index.html")
+    return render_template("index.html")  # ← este HTML tem o formulário de viagens
 
 @app.route("/api/viagens", methods=["POST"])
 def criar_viagem():
     try:
         data = request.get_json()
-        
         dados = {
             "rota": data.get("rota"),
             "empresa": data.get("empresa"),
@@ -41,12 +36,12 @@ def criar_viagem():
         res = requests.post(url, json=dados, headers=headers)
         
         if res.status_code in (200, 201, 204):
-            return jsonify({"status": "ok", "detalhes": "Viagem salva"})
+            return jsonify({"status": "ok"})
         else:
             return jsonify({"status": "erro", "detalhes": res.text}), res.status_code
             
     except Exception as e:
-        return jsonify({"status": "erro", "detalhes": str(e)}), 500
+        return jsonify({"status": "erro"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
