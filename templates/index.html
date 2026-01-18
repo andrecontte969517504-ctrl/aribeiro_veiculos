@@ -1,1 +1,121 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Viagens</title>
+    <style>
+        body { background:#f0f0f0; font-family:Arial; padding:20px; text-align:center; }
+        .caixa {
+            width:380px; margin:auto; padding:20px; background:#fff;
+            border-radius:10px; box-shadow:0 0 12px #777;
+        }
+        input, button {
+            width:95%; padding:10px; margin:8px 0;
+            border-radius:6px; border:1px solid #333;
+        }
+        button { cursor:pointer; background:#eee; }
+        button:hover { background:#333; color:#fff; }
+        .msg { font-weight:bold; margin-top:10px; min-height:20px; }
+    </style>
+</head>
+<body>
+
+<h2>Cadastro de Viagens - Aribeiro Transportes</h2>
+
+<div class="caixa">
+
+    <input id="itinerario" placeholder="Itinerário">
+    <input id="origem" placeholder="Origem">
+    <input id="destino" placeholder="Destino">
+    <input id="lat_origem" placeholder="Lat Origem">
+    <input id="long_origem" placeholder="Long Origem">
+    <input id="lat_destino" placeholder="Lat Destino">
+    <input id="long_destino" placeholder="Long Destino">
+    <input id="empresa" placeholder="Empresa">
+    <input id="motorista" placeholder="Motorista">
+    <input id="veiculo_tipo" placeholder="Tipo de Veículo">
+    <input id="placa" placeholder="Placa">
+    <input id="rota" placeholder="Rota">
+    <input id="status" placeholder="Status">
+    <input id="preco_carga" placeholder="Preço Carga">
+    <input id="preco_por_km" placeholder="Preço por KM">
+    <input id="peso_carga" placeholder="Peso Carga">
+    <input id="tipo_carga" placeholder="Tipo Carga">
+    <input id="nota_fiscal" placeholder="Nota Fiscal">
+    <input id="seguro" placeholder="Seguro">
+    <input id="escolta" placeholder="Escolta">
+    <input id="data_saida" placeholder="Data Saída (YYYY-MM-DD HH:MM)">
+    <input id="data_chegada" placeholder="Data Chegada (YYYY-MM-DD HH:MM)">
+    <input id="multas" placeholder="Multas">
+    <input id="paradas" placeholder="Paradas">
+    <input id="risco" placeholder="Risco">
+    <input id="observacoes" placeholder="Observações">
+
+    <button id="enviar">Salvar Viagem</button>
+    <button id="limpar">Limpar Campos</button>
+
+    <div id="msg" class="msg"></div>
+</div>
+
+<script>
+function mensagem(txt, cor="green") {
+    let m = document.getElementById("msg");
+    m.textContent = txt;
+    m.style.color = cor;
+}
+
+document.getElementById("enviar").onclick = async () => {
+
+    const dados = {
+        itinerario: itinerario.value,
+        origem: origem.value,
+        destino: destino.value,
+        lat_origem: lat_origem.value,
+        long_origem: long_origem.value,
+        lat_destino: lat_destino.value,
+        long_destino: long_destino.value,
+        empresa: empresa.value,
+        motorista: motorista.value,
+        veiculo_tipo: veiculo_tipo.value,
+        placa: placa.value,
+        rota: rota.value,
+        status: status.value,
+        preco_carga: preco_carga.value,
+        preco_por_km: preco_por_km.value,
+        peso_carga: peso_carga.value,
+        tipo_carga: tipo_carga.value,
+        nota_fiscal: nota_fiscal.value,
+        seguro: seguro.value,
+        escolta: escolta.value,
+        data_saida: data_saida.value,
+        data_chegada: data_chegada.value,
+        multas: multas.value,
+        paradas: paradas.value,
+        risco: risco.value,
+        observacoes: observacoes.value,
+    };
+
+    mensagem("Enviando...", "blue");
+
+    const r = await fetch("/nova_viagem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+    });
+
+    const j = await r.json();
+
+    if (j.status === "ok") mensagem("Viagem salva com sucesso!");
+    else mensagem(j.detalhes || "Erro ao salvar", "red");
+};
+
+document.getElementById("limpar").onclick = () => {
+    document.querySelectorAll("input").forEach(i => i.value = "");
+    mensagem("Campos limpos!", "orange");
+};
+</script>
+
+</body>
+</html>
