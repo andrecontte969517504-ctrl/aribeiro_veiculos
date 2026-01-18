@@ -2,57 +2,85 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viagens</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; }
+        button { border: none; cursor: pointer; }
+        #salvar { background: #28a745; color: white; }
+        #limpar { background: #dc3545; color: white; }
+        #pdf { background: #17a2b8; color: white; }
+        #msg { margin-top: 10px; text-align: center; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <input type="text" id="rota" placeholder="Rota"><br>
-    <input type="text" id="empresa" placeholder="Empresa"><br>
-    <input type="text" id="motorista" placeholder="Motorista"><br>
-    <input type="text" id="placa" placeholder="Placa"><br>
-    <input type="text" id="carga" placeholder="Carga"><br>
-    <input type="number" id="preco_km" placeholder="Preço/KM"><br>
-    <input type="text" id="nf" placeholder="NF"><br>
-    <input type="datetime-local" id="data"><br>
+
+<input type="text" placeholder="Rota *" id="rota">
+<input type="text" placeholder="Empresa *" id="empresa">
+<input type="text" placeholder="Motorista *" id="motorista">
+<input type="text" placeholder="Placa *" id="placa">
+<input type="text" placeholder="Carga" id="carga">
+<input type="number" placeholder="Preço/KM" id="preco_km">
+<input type="text" placeholder="NF" id="nf">
+<input type="text" placeholder="Data (dd/mm/aaaa)" id="data">
+
+<button id="salvar">Salvar</button>
+<button id="limpar">Limpar</button>
+<button id="pdf">PDF</button>
+
+<div id="msg"></div>
+
+<script>
+document.getElementById('salvar').onclick = function() {
+    const rota = document.getElementById('rota').value.trim();
+    const empresa = document.getElementById('empresa').value.trim();
+    const motorista = document.getElementById('motorista').value.trim();
+    const placa = document.getElementById('placa').value.trim();
     
-    <button onclick="salvar()">Salvar</button>
-    <button onclick="limpar()">Limpar</button>
-    <button onclick="pdf()">PDF</button>
-    
-    <div id="msg"></div>
-    
-    <script>
-    function salvar() {
-        const dados = {
-            rota: document.getElementById('rota').value,
-            empresa: document.getElementById('empresa').value,
-            motorista: document.getElementById('motorista').value,
-            placa: document.getElementById('placa').value,
-            carga: document.getElementById('carga').value,
-            preco_km: document.getElementById('preco_km').value,
-            nf: document.getElementById('nf').value,
-            data: document.getElementById('data').value
-        };
-        
-        fetch('/api/viagens', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dados)
-        })
-        .then(r => r.json())
-        .then(d => {
-            document.getElementById('msg').innerText = 
-                d.status === 'ok' ? 'Salvo' : 'Erro';
-        });
+    if (!rota || !empresa || !motorista || !placa) {
+        document.getElementById('msg').textContent = "Preencha os campos obrigatórios!";
+        document.getElementById('msg').style.color = "red";
+        return;
     }
     
-    function limpar() {
-        document.querySelectorAll('input').forEach(i => i.value = '');
-    }
+    const dados = {
+        rota: rota,
+        empresa: empresa,
+        motorista: motorista,
+        placa: placa,
+        carga: document.getElementById('carga').value.trim(),
+        preco_km: document.getElementById('preco_km').value,
+        nf: document.getElementById('nf').value.trim(),
+        data: document.getElementById('data').value.trim()
+    };
     
-    function pdf() {
-        window.print();
-    }
-    </script>
+    document.getElementById('msg').textContent = "Salvando...";
+    document.getElementById('msg').style.color = "blue";
+    
+    fetch('/viagens', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(d => {
+        const msg = document.getElementById('msg');
+        msg.textContent = d.status === 'ok' ? 'Viagem salva!' : 'Erro';
+        msg.style.color = d.status === 'ok' ? 'green' : 'red';
+    });
+};
+
+document.getElementById('limpar').onclick = function() {
+    document.querySelectorAll('input').forEach(i => i.value = '');
+    document.getElementById('msg').textContent = '';
+};
+
+document.getElementById('pdf').onclick = function() {
+    window.print();
+};
+</script>
+
 </body>
 </html>
