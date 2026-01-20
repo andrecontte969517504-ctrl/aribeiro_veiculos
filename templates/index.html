@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viagens</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar styles */
+        #sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        #sidebar.hidden {
+            transform: translateX(-250px);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: #1a252f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.2em;
+        }
+        
+        #toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: #34495e;
+            border-left: 4px solid #3498db;
+        }
+        
+        .sidebar-menu a.active {
+            background: #34495e;
+            border-left: 4px solid #3498db;
+            font-weight: bold;
+        }
+        
+        /* Main content styles */
+        #main-content {
+            flex: 1;
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+        
+        #main-content.expanded {
+            margin-left: 0;
+        }
+        
+        /* Toggle button when sidebar is hidden */
+        #mobile-toggle {
+            display: none;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        /* Form styles */
+        input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; }
+        button { border: none; cursor: pointer; }
+        #salvar { background: #28a745; color: white; }
+        #limpar { background: #dc3545; color: white; }
+        #pdf { background: #17a2b8; color: white; }
+        #msg { margin-top: 10px; text-align: center; font-weight: bold; }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #sidebar {
+                transform: translateX(-250px);
+            }
+            
+            #sidebar.show-mobile {
+                transform: translateX(0);
+            }
+            
+            #main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            #mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="sidebar-header">
+        <h2>Menu de Viagens</h2>
+        <button id="toggle-btn">×</button>
+    </div>
+    
+    <div class="sidebar-menu">
+        <a href="/" class="active">Cadastro Viagens</a>
+        <a href="/cassio">Cassio</a>
+        <a href="/orient">Orient</a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content">
+    <button id="mobile-toggle">☰ Menu</button>
+    
+    <h1>Cadastro de Viagens</h1>
+    
+    <input type="text" placeholder="Rota *" id="rota">
+    <input type="text" placeholder="Empresa *" id="empresa">
+    <input type="text" placeholder="Motorista *" id="motorista">
+    <input type="text" placeholder="Placa *" id="placa">
+    <input type="text" placeholder="Carga" id="carga">
+    <input type="number" placeholder="Preço/KM" id="preco_km">
+    <input type="text" placeholder="NF" id="nf">
+    <input type="text" placeholder="Data (dd/mm/aaaa)" id="data">
+
+    <button id="salvar">Salvar</button>
+    <button id="limpar">Limpar</button>
+    <button id="pdf">PDF</button>
+
+    <div id="msg"></div>
+</div>
+
+<script>
+// Sidebar toggle functionality
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('main-content');
+const toggleBtn = document.getElementById('toggle-btn');
+const mobileToggle = document.getElementById('mobile-toggle');
+const menuLinks = document.querySelectorAll('.sidebar-menu a');
+
+// Desktop toggle
+toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('hidden');
+    mainContent.classList.toggle('expanded');
+});
+
+// Mobile toggle
+mobileToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('show-mobile');
+});
+
+// Close sidebar when clicking on mobile
+menuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('show-mobile');
+        }
+        // Update active link
+        menuLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+    });
+});
+
+// Form functionality
+document.getElementById('salvar').onclick = function() {
+    const rota = document.getElementById('rota').value.trim();
+    const empresa = document.getElementById('empresa').value.trim();
+    const motorista = document.getElementById('motorista').value.trim();
+    const placa = document.getElementById('placa').value.trim();
+    
+    if (!rota || !empresa || !motorista || !placa) {
+        document.getElementById('msg').textContent = "Preencha os campos obrigatórios!";
+        document.getElementById('msg').style.color = "red";
+        return;
+    }
+    
+    const dados = {
+        rota: rota,
+        empresa: empresa,
+        motorista: motorista,
+        placa: placa,
+        carga: document.getElementById('carga').value.trim(),
+        preco_km: document.getElementById('preco_km').value,
+        nf: document.getElementById('nf').value.trim(),
+        data: document.getElementById('data').value.trim()
+    };
+    
+    document.getElementById('msg').textContent = "Salvando...";
+    document.getElementById('msg').style.color = "blue";
+    
+    fetch('/viagens', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(d => {
+        const msg = document.getElementById('msg');
+        msg.textContent = d.status === 'ok' ? 'Viagem salva!' : 'Erro';
+        msg.style.color = d.status === 'ok' ? 'green' : 'red';
+    });
+};
+
+document.getElementById('limpar').onclick = function() {
+    document.querySelectorAll('input').forEach(i => i.value = '');
+    document.getElementById('msg').textContent = '';
+};
+
+document.getElementById('pdf').onclick = function() {
+    window.print();
+};
+
+// Auto-hide sidebar on small screens
+function checkScreenSize() {
+    if (window.innerWidth <= 768) {
+        sidebar.classList.remove('hidden');
+        sidebar.classList.remove('show-mobile');
+        mainContent.classList.remove('expanded');
+    } else {
+        sidebar.classList.remove('show-mobile');
+        sidebar.classList.remove('hidden');
+        mainContent.classList.remove('expanded');
+    }
+}
+
+window.addEventListener('resize', checkScreenSize);
+checkScreenSize(); // Initial check
+</script>
+
+</body>
+</html>
