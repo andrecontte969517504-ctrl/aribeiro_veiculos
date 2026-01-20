@@ -1,1 +1,126 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relógio Analógico</title>
+<style>
+    body{
+        background:white;
+        margin:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .clock{
+        width:450px;
+        height:450px;
+        background:#0a5f08; /* fundo verde do relógio */
+        border:12px solid #222;
+        border-radius:50%;
+        position:relative;
+        box-shadow:0 0 25px rgba(0,0,0,0.5);
+    }
+
+    .num{
+        position:absolute;
+        width:100%;
+        height:100%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:38px;
+        font-weight:bold;
+        color:white;
+        transform:rotate(var(--angle)) translateY(-180px) rotate(calc(var(--angle) * -1));
+    }
+
+    .hand{
+        position:absolute;
+        background:black;
+        top:50%;
+        left:50%;
+        transform-origin:50% 100%; /* AGORA É O PIVÔ NO CENTRO */
+        transform:translate(-50%, -100%) rotate(0deg);
+        border-radius:4px;
+    }
+
+    #hour{
+        width:12px;
+        height:110px;
+    }
+    #minute{
+        width:8px;
+        height:150px;
+    }
+    #second{
+        width:4px;
+        height:170px;
+        background:red;
+    }
+
+    .center{
+        width:20px;
+        height:20px;
+        background:black;
+        border-radius:50%;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        z-index:10;
+    }
+</style>
+</head>
+<body>
+
+<div class="clock">
+
+    <!-- 12 NÚMEROS ROMANOS AUTOMÁTICOS -->
+    <div class="num" style="--angle:0deg;">XII</div>
+    <div class="num" style="--angle:30deg;">I</div>
+    <div class="num" style="--angle:60deg;">II</div>
+    <div class="num" style="--angle:90deg;">III</div>
+    <div class="num" style="--angle:120deg;">IV</div>
+    <div class="num" style="--angle:150deg;">V</div>
+    <div class="num" style="--angle:180deg;">VI</div>
+    <div class="num" style="--angle:210deg;">VII</div>
+    <div class="num" style="--angle:240deg;">VIII</div>
+    <div class="num" style="--angle:270deg;">IX</div>
+    <div class="num" style="--angle:300deg;">X</div>
+    <div class="num" style="--angle:330deg;">XI</div>
+
+    <!-- ponteiros -->
+    <div id="hour" class="hand"></div>
+    <div id="minute" class="hand"></div>
+    <div id="second" class="hand"></div>
+
+    <div class="center"></div>
+</div>
+
+<script>
+function updateClock(){
+    const now = new Date();
+
+    const sec = now.getSeconds() * 6;
+    const min = now.getMinutes() * 6 + sec/60;
+    const hr  = (now.getHours()%12) * 30 + min/12;
+
+    document.getElementById("second").style.transform =
+        `translate(-50%, -100%) rotate(${sec}deg)`;
+
+    document.getElementById("minute").style.transform =
+        `translate(-50%, -100%) rotate(${min}deg)`;
+
+    document.getElementById("hour").style.transform =
+        `translate(-50%, -100%) rotate(${hr}deg)`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+
+</body>
+</html>
