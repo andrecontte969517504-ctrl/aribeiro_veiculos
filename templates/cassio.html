@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora Cássio</title>
+<style>
+body {
+  margin: 0;
+  background: #222;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+}
+.calc {
+  width: 300px;
+  background: #3a3a3a;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 0 20px #000;
+  border: 4px solid #111;
+}
+.display {
+  width: 100%;
+  height: 60px;
+  background: #c7e3b0;
+  border: 3px solid #111;
+  border-radius: 6px;
+  text-align: right;
+  padding: 15px;
+  font-size: 28px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+button {
+  padding: 18px;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 20px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px #000;
+}
+button:active {
+  transform: scale(0.95);
+}
+.func {
+  background: #5c5c5c;
+}
+.equal {
+  background: #1d7cff;
+}
+.clear {
+  background: #ff4040;
+}
+</style>
+</head>
+<body>
+<div class="calc">
+  <div id="display" class="display">0</div>
+  <div class="keys">
+    <button class="clear" onclick="cls()">C</button>
+    <button class="func" onclick="press('/')">÷</button>
+    <button class="func" onclick="press('*')">×</button>
+    <button class="func" onclick="press('-')">−</button>
+    <button onclick="press('7')">7</button>
+    <button onclick="press('8')">8</button>
+    <button onclick="press('9')">9</button>
+    <button class="func" onclick="press('+')">+</button>
+    <button onclick="press('4')">4</button>
+    <button onclick="press('5')">5</button>
+    <button onclick="press('6')">6</button>
+    <button class="equal" onclick="calc()">=</button>
+    <button onclick="press('1')">1</button>
+    <button onclick="press('2')">2</button>
+    <button onclick="press('3')">3</button>
+    <button onclick="press('0')" style="grid-column: span 2;">0</button>
+    <button onclick="press('.')">.</button>
+  </div>
+</div>
+<script>
+let disp = document.getElementById('display');
+function press(v) {
+  if (disp.textContent === '0') disp.textContent = '';
+  disp.textContent += v;
+}
+function cls() {
+  disp.textContent = '0';
+}
+function calc() {
+  try {
+    disp.textContent = eval(disp.textContent);
+  } catch {
+    disp.textContent = 'ERR';
+  }
+}
+</script>
+</body>
+</html>
